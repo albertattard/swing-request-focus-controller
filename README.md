@@ -14,9 +14,17 @@ Swing applications.
 
 1. Run the application using Maven
 
-   ```shell
-   $ ./mvnw clean compile exec:exec
-   ```
+   - Using the old focus controller
+
+     ```shell
+     $ ./mvnw -PuseOldFocusController clean compile exec:exec
+     ```
+
+   - Using the new input verifier
+
+     ```shell
+     $ ./mvnw clean compile exec:exec
+     ```
 
 2. Build the application using Maven
 
@@ -35,8 +43,16 @@ Swing applications.
    └── swing-request-focus-controller-1.0.0.jar
    ```
 
-3. Run the application using Maven
+3. Run the application
 
-   ```shell
-   $ java -jar ./target/libs/swing-request-focus-controller-1.0.0.jar
-   ```
+   - Using the old focus controller
+
+     ```shell
+     $ java -jar ./target/libs/swing-request-focus-controller-1.0.0.jar --useOldFocusController
+     ```
+
+   - Using the new input verifier
+
+     ```shell
+     $ java -jar ./target/libs/swing-request-focus-controller-1.0.0.jar
+     ```
