@@ -186,5 +186,27 @@
                 <maven.compiler.release>${project.java.version}</maven.compiler.release>
             </properties>
         </profile>
+        <profile>
+            <id>useOldFocusController</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>${exec.maven.plugin.version}</version>
+                        <configuration>
+                            <toolchain>jdk</toolchain>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-classpath</argument>
+                                <classpath/>
+                                <argument>${project.mainClass}</argument>
+                                <argument>--useOldFocusController</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
