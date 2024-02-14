@@ -8,8 +8,6 @@ import java.util.function.Function;
 
 public class DemoPanel extends JPanel {
 
-    private JTextArea logsTextArea;
-
     public DemoPanel() {
         super(new GridBagLayout());
         initComponents();
@@ -82,30 +80,6 @@ public class DemoPanel extends JPanel {
         final JButton button = new JButton("Submit");
         button.addFocusListener(createFocusAdapter());
         add(button, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
-        add(new JLabel("Logs"), constraints);
-
-        constraints.gridy++;
-        constraints.gridwidth = 2;
-        constraints.weighty = 1;
-        constraints.fill = GridBagConstraints.BOTH;
-        logsTextArea = new JTextArea(10, 80);
-        logsTextArea.setEditable(false);
-        logsTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
-        add(new JScrollPane(logsTextArea), constraints);
-
-        constraints.gridx = 1;
-        constraints.gridy++;
-        constraints.gridwidth = 1;
-        constraints.weighty = 0;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.anchor = GridBagConstraints.EAST;
-        final JButton clear = new JButton("Clear");
-        clear.addActionListener(event -> logsTextArea.setText(""));
-        add(clear, constraints);
     }
 
     private JTextField createNonEmptyTextField() {
@@ -129,7 +103,7 @@ public class DemoPanel extends JPanel {
                 final String text = ((JTextField) component).getText();
                 final boolean valid = validator.apply(text);
                 if (!valid) {
-                    logsTextArea.append(String.format("InputVerifier - %s%n", message));
+                    System.out.printf("InputVerifier - %s%n", message);
                 }
                 return valid;
             }
@@ -141,13 +115,13 @@ public class DemoPanel extends JPanel {
             @Override
             public void focusGained(final FocusEvent event) {
                 final String name = event.getComponent().getClass().getSimpleName();
-                logsTextArea.append(String.format("FocusAdapter - %s Focus gained%n", name));
+                System.out.printf("FocusAdapter - %s Focus gained%n", name);
             }
 
             @Override
             public void focusLost(final FocusEvent event) {
                 final String name = event.getComponent().getClass().getSimpleName();
-                logsTextArea.append(String.format("FocusAdapter - %s Focus lost%n", name));
+                System.out.printf("FocusAdapter - %s Focus lost%n", name);
             }
         };
     }
