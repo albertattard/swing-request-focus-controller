@@ -1,18 +1,17 @@
 package focus;
 
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
+
+import static demo.Utils.getClassSimpleName;
 
 public class FocusChangeListener implements VetoableChangeListener {
 
     @Override
-    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+    public void vetoableChange(final PropertyChangeEvent event) {
+        final String newFocusOwner = getClassSimpleName(event.getNewValue());
+        final String oldFocusOwner = getClassSimpleName(event.getOldValue());
 
-        final Component newFocusOwner = (Component) evt.getNewValue();
-        Component oldFocusOwner = (Component) evt.getOldValue();
-
-        System.out.println("Focus Change (from: " + oldFocusOwner + "; to: " + newFocusOwner);
+        System.out.printf("Focus Change - from: %s to: %s%n", oldFocusOwner, newFocusOwner);
     }
 }
