@@ -1,10 +1,12 @@
 package demo;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.function.Function;
+
+import static demo.Utils.getClassSimpleName;
 
 public class DemoPanel extends JPanel {
 
@@ -26,9 +28,7 @@ public class DemoPanel extends JPanel {
         constraints.gridx = 1;
         constraints.weightx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        final JTextField nonEmptyTextField = createNonEmptyTextField();
-        nonEmptyTextField.addFocusListener(createFocusAdapter());
-        add(nonEmptyTextField, constraints);
+        add(createNonEmptyTextField(), constraints);
 
         constraints.gridx = 0;
         constraints.gridy++;
@@ -39,9 +39,7 @@ public class DemoPanel extends JPanel {
         constraints.gridx = 1;
         constraints.weightx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        final JTextField numbersOnlyTextField = createNumbersOnlyTextField();
-        numbersOnlyTextField.addFocusListener(createFocusAdapter());
-        add(numbersOnlyTextField, constraints);
+        add(createNumbersOnlyTextField(), constraints);
 
         constraints.gridx = 0;
         constraints.gridy++;
@@ -52,9 +50,7 @@ public class DemoPanel extends JPanel {
         constraints.gridx = 1;
         constraints.weightx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        final JRadioButton radioButton = new JRadioButton("Java");
-        radioButton.addFocusListener(createFocusAdapter());
-        add(radioButton, constraints);
+        add(createRadioButton(), constraints);
 
         constraints.gridx = 0;
         constraints.gridy++;
@@ -65,9 +61,7 @@ public class DemoPanel extends JPanel {
         constraints.gridx = 1;
         constraints.weightx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        final JCheckBox checkBox = new JCheckBox("Java");
-        checkBox.addFocusListener(createFocusAdapter());
-        add(checkBox, constraints);
+        add(createCheckbox(), constraints);
 
         constraints.gridx = 0;
         constraints.gridy++;
@@ -77,51 +71,102 @@ public class DemoPanel extends JPanel {
 
         constraints.gridx = 1;
         constraints.weightx = 1;
-        final JButton button = new JButton("Submit");
-        button.addFocusListener(createFocusAdapter());
-        add(button, constraints);
+        add(createButton(), constraints);
     }
 
     private JTextField createNonEmptyTextField() {
         final JTextField nonEmptyTextField = new JTextField(20);
         nonEmptyTextField.setToolTipText("This text field should not be empty");
-        nonEmptyTextField.setInputVerifier(createInputVerifier(text -> !text.isEmpty(), "JTextField cannot have empty text"));
+        nonEmptyTextField.addFocusListener(createFocusAdapter());
+        nonEmptyTextField.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(final JComponent component) {
+                final String text = ((JTextComponent) component).getText();
+                final boolean valid = !text.isEmpty();
+                if (!valid) {
+                    System.out.println("Input Verifier - JTextField cannot have empty text");
+                }
+                return valid;
+            }
+        });
         return nonEmptyTextField;
     }
 
     private JTextField createNumbersOnlyTextField() {
         final JTextField numbersOnlyTextField = new JTextField(20);
         numbersOnlyTextField.setToolTipText("This text field should only contain numbers");
-        numbersOnlyTextField.setInputVerifier(createInputVerifier(text -> text.matches("\\d+"), "JTextField should only contain numbers"));
-        return numbersOnlyTextField;
-    }
-
-    private InputVerifier createInputVerifier(final Function<String, Boolean> validator, final String message) {
-        return new InputVerifier() {
+        numbersOnlyTextField.addFocusListener(createFocusAdapter());
+        numbersOnlyTextField.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(final JComponent component) {
-                final String text = ((JTextField) component).getText();
-                final boolean valid = validator.apply(text);
+                final String text = ((JTextComponent) component).getText();
+                final boolean valid = text.matches("\\d+");
                 if (!valid) {
-                    System.out.printf("InputVerifier - %s%n", message);
+                    System.out.println("Input Verifier - JTextField should only contain numbers");
                 }
                 return valid;
             }
-        };
+        });
+        return numbersOnlyTextField;
+    }
+
+    private JRadioButton createRadioButton() {
+        final JRadioButton radioButton = new JRadioButton("Java");
+        radioButton.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(final JComponent component) {
+                final boolean selected = ((JRadioButton) component).isSelected();
+                if (!selected) {
+                    System.out.println("Input Verifier - JRadioButton should be selected");
+                }
+                return selected;
+            }
+        });
+        radioButton.addFocusListener(createFocusAdapter());
+        return radioButton;
+    }
+
+    private JCheckBox createCheckbox() {
+        final JCheckBox checkBox = new JCheckBox("Java");
+        checkBox.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(final JComponent component) {
+                final boolean selected = ((JCheckBox) component).isSelected();
+                if (!selected) {
+                    System.out.println("Input Verifier - JCheckBox should be selected");
+                }
+                return selected;
+            }
+        });
+        checkBox.addFocusListener(createFocusAdapter());
+        return checkBox;
+    }
+
+    private JButton createButton() {
+        final JButton button = new JButton("Submit");
+        button.addFocusListener(createFocusAdapter());
+        button.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(final JComponent component) {
+                /* We can run validation and decide whether we should yield focus */
+                return true;
+            }
+        });
+        return button;
     }
 
     private FocusAdapter createFocusAdapter() {
         return new FocusAdapter() {
             @Override
             public void focusGained(final FocusEvent event) {
-                final String name = event.getComponent().getClass().getSimpleName();
-                System.out.printf("FocusAdapter - %s Focus gained%n", name);
+                final String name = getClassSimpleName(event.getComponent());
+                System.out.printf("Focus Adapter - %s Focus gained%n", name);
             }
 
             @Override
             public void focusLost(final FocusEvent event) {
-                final String name = event.getComponent().getClass().getSimpleName();
-                System.out.printf("FocusAdapter - %s Focus lost%n", name);
+                final String name = getClassSimpleName(event.getComponent());
+                System.out.printf("Focus Adapter - %s Focus lost%n", name);
             }
         };
     }
