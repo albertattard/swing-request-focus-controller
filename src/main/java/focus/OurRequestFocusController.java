@@ -11,4 +11,9 @@ public class OurRequestFocusController implements RequestFocusController {
         System.out.println("Focus Request (from: " + from + "; to: " + to + "; temporary=" + temporary);
         return true;
     }
+
+    @Override
+    public Component getGroupSelection(Component component, CausedFocusEvent.Cause cause) {
+        return component;
+    }
 }
